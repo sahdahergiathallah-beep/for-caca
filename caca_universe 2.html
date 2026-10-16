@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caca Universe ✦</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+  body {
+    background: #03030d;
+    color: white;
+    font-family: "Trebuchet MS", system-ui, sans-serif;
+    user-select: none;
+  }
+  #space {
+    position: fixed; inset: 0; overflow: hidden;
+    background:
+      radial-gradient(ellipse at 50% 52%, rgba(91,34,143,.25), transparent 34%),
+      radial-gradient(ellipse at 20% 78%, rgba(0,197,166,.12), transparent 30%),
+      radial-gradient(ellipse at 80% 20%, rgba(51,91,255,.12), transparent 28%),
+      #03030d;
+  }
+  #stars, #words, #orbit-lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .nebula {
+    position: absolute; width: 60vw; height: 60vw; border-radius: 50%;
+    filter: blur(75px); opacity: .18; pointer-events: none;
+    animation: nebulaDrift 12s ease-in-out infinite alternate;
+  }
+  .nebula.one { background: #8b31ff; top: 25%; left: -20%; }
+  .nebula.two { background: #00e7c0; bottom: -30%; right: -15%; animation-delay: -5s; }
+  @keyframes nebulaDrift { to { transform: translate(8vw,-5vh) scale(1.15); } }
+  #universe {
+    position: absolute; left: 50%; top: 48%;
+    width: 1px; height: 1px;
+    transform-style: preserve-3d;
+    perspective: 900px;
+  }
+  #planet {
+    position: absolute; width: clamp(110px, 23vw, 210px); aspect-ratio: 1;
+    left: 0; top: 0; transform: translate(-50%,-50%);
+    border-radius: 50%;
+    background:
+      radial-gradient(ellipse at 28% 25%, rgba(255,255,255,.95), transparent 5%),
+      repeating-linear-gradient(168deg, transparent 0 12px, rgba(255,255,255,.18) 13px 17px, transparent 18px 28px),
+      linear-gradient(145deg, #fce7ff 0%, #f5a9ec 22%, #b7a7ff 42%, #ffb7cf 61%, #ffe9b5 79%, #8c7dff 100%);
+    box-shadow: 0 0 14px #ffb7ff, 0 0 42px rgba(217,104,255,.8), 0 0 100px rgba(120,66,255,.42), inset -22px -12px 35px rgba(37,14,95,.4), inset 14px 10px 25px rgba(255,255,255,.7);
+    animation: planetGlow 4s ease-in-out infinite alternate;
+    z-index: 5;
+  }
+  #planet::before {
+    content: ""; position: absolute; inset: -9%; border-radius: 50%;
+    border: 2px solid rgba(255,220,255,.8);
+    box-shadow: 0 0 15px rgba(255,143,255,.9);
+    transform: rotateX(68deg) rotateZ(-22deg) scaleY(.48);
+  }
+  #planet::after {
+    content: ""; position: absolute; left: -35%; right: -35%; top: 47%;
+    height: 15%; border-radius: 50%;
+    border-top: 4px solid rgba(255,255,255,.65);
+    border-bottom: 2px solid rgba(255,222,255,.4);
+    transform: rotate(-19deg);
+    filter: drop-shadow(0 0 5px #fff);
+  }
+  @keyframes planetGlow { to { filter: hue-rotate(18deg); box-shadow: 0 0 22px #ffb7ff, 0 0 60px rgba(217,104,255,.9), 0 0 120px rgba(120,66,255,.5); } }
+  .word {
+    position: absolute; left: 0; top: 0;
+    font-weight: 800; letter-spacing: .02em; white-space: nowrap;
+    color: hsl(var(--hue), 100%, 83%);
+    text-shadow: 0 0 5px currentColor, 0 0 13px currentColor, 0 0 25px rgba(255,255,255,.45);
+    transform: translate(-50%,-50%);
+    animation: twinkle var(--twinkle, 2.8s) ease-in-out infinite alternate;
+    will-change: transform, opacity;
+  }
+  @keyframes twinkle { from { opacity: .55; } to { opacity: 1; } }
+  #caption {
+    position: absolute; left: 50%; bottom: max(28px, env(safe-area-inset-bottom));
+    transform: translateX(-50%); width: min(92vw, 560px);
+    text-align: center; z-index: 10;
+    text-shadow: 0 2px 12px #000;
+  }
+  #caption .main { font-size: clamp(18px, 4.5vw, 30px); font-weight: 900; letter-spacing: .08em; }
+  #caption .sub { margin-top: 8px; font-size: 12px; opacity: .72; letter-spacing: .1em; }
+  #hint {
+    position: absolute; top: max(22px, env(safe-area-inset-top)); left: 38%;
+    transform: translateX(-50%); font-size: 10px; letter-spacing: .14em;
+    color: rgba(255,255,255,.7); text-transform: uppercase; white-space: nowrap;
+  }
+  #toggle {
+    position: absolute; right: 12px; top: max(18px, env(safe-area-inset-top));
+    z-index: 20; border: 1px solid rgba(255,255,255,.28);
+    color: white; background: rgba(255,255,255,.08); backdrop-filter: blur(12px);
+    border-radius: 999px; padding: 9px 11px; font-size: 11px; cursor: pointer;
+  }
+  #toggle:hover { background: rgba(255,255,255,.17); }
+  .shooting-star {
+    position: absolute; width: 100px; height: 1px;
+    background: linear-gradient(90deg, transparent, white, transparent);
+    transform: rotate(-35deg); opacity: 0;
+    animation: shoot 5s linear infinite;
+  }
+  @keyframes shoot {
+    0%, 70% { opacity: 0; transform: translate(0,0) rotate(-35deg); }
+    73% { opacity: 1; }
+    84% { opacity: 0; transform: translate(-230px,180px) rotate(-35deg); }
+    100% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 15s !important; }
+  }
+</style>
+</head>
+<body>
+<div id="space">
+  <div class="nebula one"></div><div class="nebula two"></div>
+  <canvas id="stars"></canvas>
+  <canvas id="orbit-lines"></canvas>
+  <div id="universe">
+    <div id="planet" aria-label="Planet bercahaya"></div>
+    <div id="words"></div>
+  </div>
+  <div class="shooting-star" style="top:18%;right:8%;animation-delay:1s"></div>
+  <div class="shooting-star" style="top:64%;right:2%;animation-delay:3.4s"></div>
+  <div id="hint">✦ welcome to caca universe ✦</div>
+  <button id="toggle" type="button">Jeda animasi Ⅱ</button>
+  <div id="caption">
+    <div class="main">caca ♡ caca ♡ caca</div>
+    <div class="sub">a little universe made of caca ✦</div>
+  </div>
+</div>
+<script>
+(() => {
+  const starCanvas = document.getElementById('stars');
+  const orbitCanvas = document.getElementById('orbit-lines');
+  const starCtx = starCanvas.getContext('2d');
+  const orbitCtx = orbitCanvas.getContext('2d');
+  const wordsRoot = document.getElementById('words');
+  const universe = document.getElementById('universe');
+  const toggle = document.getElementById('toggle');
+  let W = 0, H = 0, dpr = 1, stars = [], words = [], paused = false;
+  let start = performance.now(), last = start;
+
+  function resize() {
+    W = innerWidth; H = innerHeight; dpr = Math.min(devicePixelRatio || 1, 2);
+    [starCanvas, orbitCanvas].forEach(c => {
+      c.width = Math.floor(W*dpr); c.height = Math.floor(H*dpr);
+      c.style.width = W+'px'; c.style.height = H+'px';
+    });
+    starCtx.setTransform(dpr,0,0,dpr,0,0);
+    orbitCtx.setTransform(dpr,0,0,dpr,0,0);
+    stars = Array.from({length: Math.floor(W*H/1800)}, () => ({
+      x: Math.random()*W, y: Math.random()*H,
+      r: Math.random()*1.35+.25, a: Math.random()*.7+.2,
+      phase: Math.random()*Math.PI*2, speed: Math.random()*1.8+.3
+    }));
+    createWords();
+  }
+  function createWords() {
+    wordsRoot.innerHTML = ''; words = [];
+    const count = Math.min(260, Math.max(130, Math.floor(W*H/2400)));
+    for (let i=0; i<count; i++) {
+      const el = document.createElement('span');
+      el.className = 'word'; el.textContent = i%9===0 ? 'caca ♡' : 'caca';
+      const size = 8 + Math.random()*8;
+      el.style.fontSize = size+'px';
+      el.style.setProperty('--hue', String(255 + Math.random()*85));
+      el.style.setProperty('--twinkle', (1.7+Math.random()*3)+'s');
+      wordsRoot.appendChild(el);
+      words.push({
+        el, angle: Math.random()*Math.PI*2,
+        radius: 35+Math.random()*Math.min(W,H)*.43,
+        speed: (Math.random()*.18+.035)*(Math.random()<.5?-1:1),
+        depth: Math.random(), size,
+        wobble: Math.random()*Math.PI*2,
+        wobbleSpeed: .3+Math.random()*.8,
+        yStretch: .38+Math.random()*.48
+      });
+    }
+  }
+  function drawStars(t) {
+    starCtx.clearRect(0,0,W,H);
+    for (const s of stars) {
+      const alpha = s.a*(.55+.45*Math.sin(t*.001*s.speed+s.phase));
+      starCtx.globalAlpha = alpha;
+      starCtx.fillStyle = '#fff';
+      starCtx.beginPath(); starCtx.arc(s.x,s.y,s.r,0,Math.PI*2); starCtx.fill();
+    }
+    starCtx.globalAlpha = 1;
+  }
+  function drawOrbits(t) {
+    orbitCtx.clearRect(0,0,W,H);
+    const cx=W/2, cy=H*.50;
+    orbitCtx.save(); orbitCtx.translate(cx,cy);
+    for (let i=0;i<3;i++) {
+      orbitCtx.beginPath();
+      orbitCtx.ellipse(0,0,Math.min(W*.34,220)+i*(W < 600 ? 12 : 22),Math.min(H*.075,70)+i*(W < 600 ? 8 : 12), -.16+i*.17, 0, Math.PI*2);
+      orbitCtx.strokeStyle = `rgba(217,174,255,${.13-i*.025})`;
+      orbitCtx.lineWidth = 1; orbitCtx.stroke();
+    }
+    orbitCtx.restore();
+  }
+  function animate(now) {
+    requestAnimationFrame(animate);
+    if (paused) return;
+    const t = now-start, dt = Math.min((now-last)/1000,.04); last=now;
+    drawStars(t); drawOrbits(t);
+    const cx = W/2, cy = H*.50;
+    const zoomCycle = (t/1000)%28;
+    const zoom = (W < 600 ? 0.78 : 0.92) + 0.06*(.5-.5*Math.cos(zoomCycle/28*Math.PI*2));
+    universe.style.transform = `translate(${cx}px, ${cy}px) scale(${zoom})`;
+    for (const w of words) {
+      w.angle += w.speed*dt;
+      const breathe = Math.sin(t*.001*w.wobbleSpeed+w.wobble)*9;
+      const perspective = .72 + w.depth*.5;
+      const mobileFit = W < 600 ? 0.72 : 1;
+      const r = w.radius*mobileFit*(.82 + .08*Math.sin(t*.00035+w.wobble));
+      const x = Math.cos(w.angle)*r*perspective;
+      const y = Math.sin(w.angle)*r*w.yStretch + breathe;
+      const depthFade = .52 + .48*((Math.sin(w.angle)+1)/2);
+      const scale = (.65 + w.depth*.7) * (0.9 + .1*Math.sin(t*.001+w.wobble));
+      w.el.style.transform = `translate(${x}px,${y}px) translate(-50%,-50%) scale(${scale}) rotate(${Math.sin(w.angle)*8}deg)`;
+      w.el.style.opacity = String(Math.min(1,depthFade*(w.radius<150?.85:1)));
+      w.el.style.zIndex = String(Math.round(depthFade*10));
+    }
+  }
+  toggle.addEventListener('click', () => {
+    paused = !paused;
+    toggle.textContent = paused ? 'Lanjutkan animasi ▶' : 'Jeda animasi Ⅱ';
+    if (!paused) last = performance.now();
+  });
+  addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(animate);
+})();
+</script>
+</body>
+</html>
